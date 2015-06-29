@@ -19,7 +19,8 @@ var config = {
   pathToWdInput: pathToWorkDir + '/input',
   pathToWdOutput: pathToWorkDir + '/output',
 
-  shareFolder: '\\\\ua006248\\Incoming\\allure',
+  shareFolder: '\\\\STD-FILERPRD1\\dm_builds_local\\dv\\SRA\\allureResults',
+  //shareFolder: '\\\\ua006248\\Incoming\\allure',
   testFolderPrefix: 'allure-results_',
   testFolderSuffixLength: 13, //timestamp length
   copyCompleteFile: 'COPY_COMPLETE',
@@ -35,7 +36,7 @@ if (fs.existsSync(config.pathToDbFile || config.pathToDbFile + '.bak')) {
     dbJson = JSON.parse(fs.readFileSync(config.pathToDbFile + '.bak', 'utf8'));
   }
 } else {
-  dbJson = {}
+  dbJson = [];
 }
 config.dbJson = dbJson;
 

@@ -16,8 +16,8 @@ module.exports = function (_cfg) {
     usePolling: true,
     alwaysStat: false,
     depth: 1,
-    interval: 100,
-    binaryInterval: 300,
+    interval: 2001,
+    binaryInterval: 3000,
 
     ignorePermissionErrors: true,
     atomic: true
@@ -86,7 +86,7 @@ module.exports = function (_cfg) {
                   //backup db.json
                   var dbJsonPath = path.join(cfg.rootDir, cfg.pathToDbFile);
                   fse.copy(dbJsonPath, dbJsonPath + '.bak', function (err) {
-                    if (err) log.error(err);
+                    if (err) log.warn(err);
                     log.verbose('db.json backup created.');
                     cfg.dbJson.push(dbRecord);
 
