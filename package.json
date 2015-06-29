@@ -1,0 +1,12 @@
+{
+  "name": "testResultsServer",
+  "version": "0.0.1",
+  "main": "server.js",
+  "author": "mgrybyk",
+  "dependencies": {
+    "chokidar": "^1.0.3",
+    "express": "^4.13.0",
+    "fs-extra": "^0.20.1",
+    "winston": "^1.0.0"
+  }
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app="testResults">
+
+<head lang="en">
+  <meta charset="utf-8">
+  <meta name="description" content="SDA Test Results">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Language" content="en">
+
+  <title>Test results</title>
+
+  <link rel="stylesheet" href="css/reset.css"/>
+  <link rel="stylesheet" href="css/app.css"/>
+
+</head>
+
+<body ng-controller="MainCtrl">
+
+<ul>
+  <li ng-repeat="testFilterType in testFilterTypes">
+    <a href ng-click="setTestTypeFilter(testFilterType.value)">{{testFilterType.name}}</a>
+  </li>
+</ul>
+
+<ul>
+  <li ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter">
+    <a href="/results/{{testResult.timestamp}}/#/">[{{testResult.testType}}] {{testResult.processName}}
+                                                   ({{testResult.envName}}) on {{getDate(testResult.timestamp)}}
+    </a>
+  </li>
+</ul>
+
+<script src="components/angularjs/angular.js"></script>
+<script src="libs/xdate.js"></script>
+<script src="js/app.js"></script>
+</body>
+
+</html>
