@@ -1,3 +1,44 @@
+/* http://colorhunt.co/alltime#f9ed69f08a5db83b5e6a2c70 */
 body {
+    font-family: Arial, serif;
+    background-color: #6A2C70;
+    color: #F9ED69;
+    padding: 5px;
+}
+
+.row span.cell {
+
+}
+
+.row span.cell-header {
     font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.row.failed {
+    background-color: #B83B5E;
+}
+
+a {
+    color: #F9ED69;
+}
+
+a:visited {
+    color: #F08A5D;
+}
+
+.ng-cloak
+{
+    display: none;
+}
+
+.loading-container.ng-cloak {
+    display: block;
+}
+
+.loading-container {
+    display: none;
+}
+.vhover a span.filter-active {
+    background-color: #e02200;
 }

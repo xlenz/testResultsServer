@@ -13,7 +13,7 @@
     ];
     $http({
       method: 'GET',
-      url: '/resultsJson'
+      url: '/api/results/1'
     }).success(function (data) {
       $scope.testResults = data;
     }).error(function (data) {
@@ -22,8 +22,8 @@
 
     $scope.getDate = function (timestamp) {
       var testDate = new XDate(timestamp);
-      return testDate.toString('yyyy-MMM-dd hh:MM:ss');
-    }
+      return testDate.toString('dd MMM hh:MM:ss');//yyyy-MMM-dd
+    };
 
     $scope.setTestTypeFilter = function (testType) {
       $scope.testTypeFilter.testType = testType;

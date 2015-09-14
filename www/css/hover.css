@@ -1,0 +1,539 @@
+/* http://codepen.io/teeganlincoln/pen/bVNgBR */
+
+.vhover div a {
+  position: relative;
+  display: inline-block;
+  outline: none;
+  color: #fff;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.3);
+  font-size: 1.35em;
+}
+
+.vhover div.section {
+  padding: 10px;
+}
+
+.vhover div.section:nth-child(even) {
+  background: #eee;
+}
+
+.vhover .flip a {
+  line-height: 44px;
+  -webkit-perspective: 1000px;
+  -moz-perspective: 1000px;
+  perspective: 1000px;
+}
+.vhover .flip a span {
+  position: relative;
+  display: inline-block;
+  padding: 0 14px;
+  background: tomato;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  -webkit-transform-origin: 50% 0;
+  -moz-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+.vhover .flip a span:before {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: #e02200;
+  content: attr(data-hover);
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  -webkit-transform: rotateX(-90deg);
+  -moz-transform: rotateX(-90deg);
+  transform: rotateX(-90deg);
+  -webkit-transform-origin: 50% 0;
+  -moz-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+}
+.vhover .flip a:hover, .vhover .flip a:focus {
+  outline: none;
+}
+.vhover .flip a:hover span, .vhover .flip a:focus span {
+  -webkit-transform: rotateX(90deg) translateY(-22px);
+  -moz-transform: rotateX(90deg) translateY(-22px);
+  transform: rotateX(90deg) translateY(-22px);
+}
+.vhover .flip a:hover span:before, .vhover .flip a:focus span:before {
+  background: #e02200;
+}
+
+/* Effect 5: same word slide in */
+.vhover .slidein a {
+  overflow: hidden;
+  padding: 0 4px;
+  height: 1em;
+  color: slategray;
+}
+.vhover .slidein a span {
+  position: relative;
+  display: inline-block;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.vhover .slidein a span:before {
+  position: absolute;
+  top: 100%;
+  content: attr(data-hover);
+  font-weight: 700;
+  color: tomato;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+.vhover .slidein a:hover span, .vhover .slidein a:focus span {
+  -webkit-transform: translateY(-100%);
+  -moz-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+.vhover .borderfade a {
+  padding: 10px;
+  color: slategray;
+  font-weight: 700;
+  text-shadow: none;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.vhover .borderfade a:before, .vhover .borderfade a:after {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: tomato;
+  content: '';
+  opacity: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  -webkit-transform: translateY(-10px);
+  -moz-transform: translateY(-10px);
+  transform: translateY(-10px);
+}
+.vhover .borderfade a:before {
+  top: 0;
+  -webkit-transform: translateY(-10px);
+  -moz-transform: translateY(-10px);
+  transform: translateY(-10px);
+}
+.vhover .borderfade a:after {
+  bottom: 0;
+  -webkit-transform: translateY(10px);
+  -moz-transform: translateY(10px);
+  transform: translateY(10px);
+}
+.vhover .borderfade a:hover, .vhover .borderfade a:focus {
+  color: tomato;
+}
+.vhover .borderfade a:hover:before, .vhover .borderfade a:hover:after, .vhover .borderfade a:focus:before, .vhover .borderfade a:focus:after {
+  opacity: 1;
+  -webkit-transform: translateY(0px);
+  -moz-transform: translateY(0px);
+  transform: translateY(0px);
+}
+
+.vhover .arrowbtns .btn {
+  background: none;
+  cursor: pointer;
+  padding: 25px 80px;
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 700;
+  outline: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  border: 3px solid tomato;
+  color: tomato;
+  overflow: hidden;
+}
+.vhover .arrowbtns .btn:after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.vhover .arrowbtns .btn:before {
+  font-family: 'FontAwesome';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  position: absolute;
+  height: 100%;
+  font-size: 125%;
+  line-height: 3.5;
+  color: #fff;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.vhover .arrowbtns .btn:active {
+  border-color: tomato;
+  color: tomato;
+}
+.vhover .arrowbtns .btn:active:before {
+  color: #17954c;
+}
+.vhover .arrowbtns .btn:hover {
+  background: tomato;
+  color: #fff;
+}
+.vhover .arrowbtns .arrow-left:before {
+  left: 70%;
+  opacity: 0;
+  top: 0;
+}
+.vhover .arrowbtns .arrow-left:hover:before {
+  left: 80%;
+  opacity: 1;
+}
+.vhover .arrowbtns .arrow-right:before {
+  left: 30%;
+  opacity: 0;
+  top: 0;
+}
+.vhover .arrowbtns .arrow-right:hover:before {
+  left: 10%;
+  opacity: 1;
+}
+
+.vhover .overlinegrow .hvr-overline-from-center {
+  padding: 20px;
+  cursor: pointer;
+  background: #fff;
+  text-decoration: none;
+  color: #666;
+  -webkit-tap-highlight-color: transparent;
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  overflow: hidden;
+  -webkit-transition: 0.3s ease-in-out color;
+  -moz-transition: 0.3s ease-in-out color;
+  transition: 0.3s ease-in-out color;
+}
+.vhover .overlinegrow .hvr-overline-from-center:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  right: 50%;
+  top: 0;
+  background: #2098d1;
+  height: 4px;
+  -webkit-transition-property: left, right;
+  transition-property: left, right;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+.vhover .overlinegrow .hvr-overline-from-center.blue:hover, .vhover .overlinegrow .hvr-overline-from-center.blue:focus, .vhover .overlinegrow .hvr-overline-from-center.blue:active, .vhover .overlinegrow .hvr-overline-from-center.blue.active {
+  color: skyblue;
+}
+.vhover .overlinegrow .hvr-overline-from-center.blue:before {
+  background: skyblue;
+}
+.vhover .overlinegrow .hvr-overline-from-center.red:hover, .vhover .overlinegrow .hvr-overline-from-center.red:focus, .vhover .overlinegrow .hvr-overline-from-center.red:active, .vhover .overlinegrow .hvr-overline-from-center.red.active {
+  color: maroon;
+}
+.vhover .overlinegrow .hvr-overline-from-center.red:before {
+  background: maroon;
+}
+.vhover .overlinegrow .hvr-overline-from-center.green:hover, .vhover .overlinegrow .hvr-overline-from-center.green:focus, .vhover .overlinegrow .hvr-overline-from-center.green:active, .vhover .overlinegrow .hvr-overline-from-center.green.active {
+  color: limegreen;
+}
+.vhover .overlinegrow .hvr-overline-from-center.green:before {
+  background: limegreen;
+}
+.vhover .overlinegrow .hvr-overline-from-center.orange:hover, .vhover .overlinegrow .hvr-overline-from-center.orange:focus, .vhover .overlinegrow .hvr-overline-from-center.orange:active, .vhover .overlinegrow .hvr-overline-from-center.orange.active {
+  color: orange;
+}
+.vhover .overlinegrow .hvr-overline-from-center.orange:before {
+  background: orange;
+}
+.vhover .overlinegrow .hvr-overline-from-center:hover:before, .vhover .overlinegrow .hvr-overline-from-center:focus:before, .vhover .overlinegrow .hvr-overline-from-center:active:before, .vhover .overlinegrow .hvr-overline-from-center.active:before {
+  left: 0;
+  right: 0;
+}
+
+.vhover .bggrow .hvr-sweep-to-bottom {
+  padding: 20px;
+  cursor: pointer;
+  background: #fff;
+  text-decoration: none;
+  color: #666;
+  -webkit-tap-highlight-color: transparent;
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+.vhover .bggrow .hvr-sweep-to-bottom:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #2098d1;
+  -webkit-transform: scaleY(0);
+  transform: scaleY(0);
+  -webkit-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+.vhover .bggrow .hvr-sweep-to-bottom.blue:before {
+  background: navy;
+}
+.vhover .bggrow .hvr-sweep-to-bottom.red:before {
+  background: maroon;
+}
+.vhover .bggrow .hvr-sweep-to-bottom.green:before {
+  background: limegreen;
+}
+.vhover .bggrow .hvr-sweep-to-bottom.orange:before {
+  background: orange;
+}
+.vhover .bggrow .hvr-sweep-to-bottom:hover, .vhover .bggrow .hvr-sweep-to-bottom:focus, .vhover .bggrow .hvr-sweep-to-bottom:active, .vhover .bggrow .hvr-sweep-to-bottom.active {
+  color: white;
+}
+.vhover .bggrow .hvr-sweep-to-bottom:hover:before, .vhover .bggrow .hvr-sweep-to-bottom:focus:before, .vhover .bggrow .hvr-sweep-to-bottom:active:before, .vhover .bggrow .hvr-sweep-to-bottom.active:before {
+  -webkit-transform: scaleY(1);
+  transform: scaleY(1);
+}
+
+.vhover .svgwoosh .woosh {
+  cursor: pointer;
+  display: block;
+  font-weight: 400;
+  line-height: 45px;
+  max-width: 160px;
+  text-align: center;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  vertical-align: middle;
+  width: 100%;
+  background: #fff;
+  font-weight: 100;
+  color: #666;
+  -webkit-transition: 0.3s ease-in-out all;
+  -moz-transition: 0.3s ease-in-out all;
+  transition: 0.3s ease-in-out all;
+}
+.vhover .svgwoosh .woosh svg {
+  height: 45px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.vhover .svgwoosh .woosh rect {
+  fill: none;
+  stroke: #666;
+  stroke-width: 4;
+  stroke-dasharray: 422, 0;
+  -webkit-transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
+  -moz-transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.vhover .svgwoosh .woosh:hover {
+  background: rgba(255, 99, 71, 0);
+  letter-spacing: 1px;
+  color: tomato;
+}
+.vhover .svgwoosh .woosh:hover rect {
+  stroke-width: 5;
+  stroke: tomato;
+  stroke-dasharray: 15, 310;
+  stroke-dashoffset: 48;
+}
+
+.vhover .fillin .link-effect-3 a {
+  padding: 10px 0;
+  margin: 0 20px;
+  color: #797878;
+  text-shadow: none;
+  position: relative;
+}
+.vhover .fillin .link-effect-3 a::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  padding: 10px 0;
+  max-width: 0;
+  border-bottom: 2px solid tomato;
+  color: tomato;
+  content: attr(data-hover);
+  -webkit-transition: max-width 0.5s;
+  -moz-transition: max-width 0.5s;
+  transition: max-width 0.5s;
+}
+.vhover .fillin .link-effect-3 a:hover::before {
+  max-width: 100%;
+}
+
+.vhover .filldown .link-effect-4 a {
+  padding: 0 10px;
+  margin: 0 20px;
+  color: #797878;
+  text-shadow: none;
+  position: relative;
+}
+.vhover .filldown .link-effect-4 a::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  padding: 0 10px;
+  max-height: 0;
+  color: tomato;
+  content: attr(data-hover);
+  -webkit-transition: max-height 0.5s;
+  -moz-transition: max-height 0.5s;
+  transition: max-height 0.5s;
+}
+.vhover .filldown .link-effect-4 a:hover::before {
+  max-height: 100%;
+}
+
+.vhover .crosshair .link-effect-14 a {
+  color: #666;
+  padding: 10px 20px;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  -webkit-transition: 0.3s ease-out;
+  -moz-transition: 0.3s ease-out;
+  transition: 0.3s ease-out;
+}
+.vhover .crosshair .link-effect-14 a span::before {
+  width: 5px;
+  height: 5px;
+  background: transparent;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-top: 2px solid tomato;
+  border-left: 2px solid tomato;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0;
+}
+.vhover .crosshair .link-effect-14 a span::after {
+  width: 5px;
+  height: 5px;
+  background: transparent;
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-right: 2px solid tomato;
+  border-bottom: 2px solid tomato;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0;
+}
+.vhover .crosshair .link-effect-14 a::before {
+  width: 5px;
+  height: 5px;
+  background: transparent;
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-right: 2px solid tomato;
+  border-top: 2px solid tomato;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0;
+}
+.vhover .crosshair .link-effect-14 a::after {
+  width: 5px;
+  height: 5px;
+  background: transparent;
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  border-left: 2px solid tomato;
+  border-bottom: 2px solid tomato;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0;
+}
+.vhover .crosshair .link-effect-14 a:hover {
+  color: tomato;
+}
+.vhover .crosshair .link-effect-14 a:hover::before {
+  opacity: 1;
+  right: 5px;
+  top: 5px;
+}
+.vhover .crosshair .link-effect-14 a:hover::after {
+  opacity: 1;
+  left: 5px;
+  bottom: 5px;
+}
+.vhover .crosshair .link-effect-14 a:hover span::before {
+  opacity: 1;
+  left: 5px;
+  top: 5px;
+}
+.vhover .crosshair .link-effect-14 a:hover span::after {
+  opacity: 1;
+  right: 5px;
+  bottom: 5px;
+}

@@ -1,11 +1,9 @@
 'use strict';
 
 var express = require('express');
-var cfg;
 
-module.exports = function (app, _cfg, routes) {
-  cfg = _cfg;
-  var pathToPublic = cfg.pathToApp;
+module.exports = function (app, routes) {
+  var pathToPublic = CONFIG.pathToApp;
   //app.use(logWho);
   app.use(express.static(pathToPublic));
   routes.routes(app);
@@ -22,9 +20,9 @@ function logWho(req, res, next) {
 function pageNotFound(req, res, next) {
   res.status(404);
   log.warn('Not found URL: ' + req.url);
-  var page404 = cfg.pageNotFound;
+  var page404 = CONFIG.pageNotFound;
   if (req.method === 'GET') {
-    return res.sendFile(cfg.rootDir + page404);
+    return res.sendFile(CONFIG.rootDir + page404);
   }
   return res.send({
     error: 'Resource not found',
@@ -33,6 +31,7 @@ function pageNotFound(req, res, next) {
 }
 
 function internalServerError(err, req, res, next) {
+  err.message = err.message || 'Unknown error';
   res.status(err.status || 500);
   log.error('Internal error(%d): %s', res.statusCode, err.message);
   console.log('req.body:\n', req.body);

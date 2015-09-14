@@ -1,13 +1,17 @@
 'use strict';
 
-var self = this;
-var cfg = null;
+var Results = require('./../models/Results');
 
-module.exports = function (_cfg) {
-  cfg = _cfg;
-  return self;
+exports.getResults = function (req, res, next) {
+  Results.getPeriodResults(req.params.period).exec(function (err, results) {
+    if (err) return next(err, req, res, next);
+    return res.send(results);
+  });
 };
 
-exports.dbJson = function (req, res, next) {
-  return res.send(cfg.dbJson);
+exports.getPeriods = function (req, res, next) {
+  Results.getPeriods(function (err, period) {
+    if (err) return next(err, req, res, next);
+    return res.send(`${period}`);
+  });
 };

@@ -1,15 +1,7 @@
 'use strict';
 
-var self = this;
-var cfg = null;
-
-module.exports = function (_cfg) {
-  cfg = _cfg;
-  return self;
-};
-
 exports.appHtml = function (req, res, next) {
-  return res.sendFile(cfg.rootDir + cfg.appHtml);
+  return res.sendFile(CONFIG.rootDir + CONFIG.appHtml);
 };
 
 var site = function (req, res, next) {
@@ -20,9 +12,9 @@ var site = function (req, res, next) {
   path = path.split('?')[0];
   var uri;
   if (path.indexOf('/data') === 0) {
-    uri = cfg.rootDir + 'db/results/' + req.params.timestamp + path;
+    uri = CONFIG.rootDir + 'db/results/' + req.params.timestamp + path;
   } else {
-    uri = cfg.rootDir + cfg.pathToApp + '/static' + path;
+    uri = CONFIG.rootDir + CONFIG.pathToApp + '/static' + path;
   }
   return res.sendFile(uri);
 };

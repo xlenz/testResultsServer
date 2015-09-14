@@ -46,11 +46,14 @@ angular.module('allure.core.controllers', [])
         };
 
         $scope.langs = [{
-            name: "ENG",
+            name: "English",
             locale: "en"
         }, {
-            name: "РУС",
+            name: "Русский",
             locale: "ru"
+        },{
+           name: "Português",
+           locale: "ptbr" 
         }];
         $scope.selectedLang = locale.getItem('lang') || browserLanguage() || 'en';
         $translate.use($scope.selectedLang);

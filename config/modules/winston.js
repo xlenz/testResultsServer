@@ -9,21 +9,6 @@ if (!fs.existsSync('logs')) {
 
 var logger = new (winston.Logger)({
   transports: [
-    //using debug to print json :)
-    //new (winston.transports.Console)({
-    //  name: 'jsonPrint',
-    //  level: 'debug',
-    //  colorize: false,
-    //  json: true,
-    //  showLevel: false,
-    //  formatter: function(options) {
-    //    // Return string will be passed to logger.
-    //    if (options.level.toLowerCase() === 'debug') {
-    //      return options.message;
-    //    }
-    //    return null;
-    //  }
-    //}),
     //this one used for everything else
     new (winston.transports.Console)({
       name: 'consolePrint',
@@ -58,21 +43,3 @@ var logger = new (winston.Logger)({
 });
 
 module.exports = logger;
-
-if (!String.prototype.format) {
-  String.prototype.format = function () {
-    var str = this.toString();
-    if (!arguments.length) {
-      return str;
-    }
-    var argType = typeof arguments[0];
-    var args = arguments;
-    if ('string' !== argType && 'number' !== argType) {
-      args = arguments[0];
-    }
-    Object.keys(args).forEach(function (arg) {
-      str = str.replace(new RegExp('\\{' + arg + '\\}', 'gi'), args[arg]);
-    });
-    return str;
-  };
-}

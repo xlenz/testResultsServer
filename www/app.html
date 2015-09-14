@@ -9,26 +9,72 @@
 
   <title>Test results</title>
 
+  <link rel="stylesheet" href="css/loading.css"/>
   <link rel="stylesheet" href="css/reset.css"/>
+  <link rel="stylesheet" href="css/hover.css"/>
   <link rel="stylesheet" href="css/app.css"/>
-
+  <link rel="stylesheet" href="css/simplegrid.css"/>
 </head>
 
-<body ng-controller="MainCtrl">
+<body ng-controller="MainCtrl" ng-cloak>
+<div class="container-fluid ng-cloak">
+  <section class="row">
+    <div class="col-12">
+      <div class="vhover">
+        <div class="flip section">
+          <a ng-repeat="testFilterType in testFilterTypes" href ng-click="setTestTypeFilter(testFilterType.value)">
+            <span data-hover="{{testFilterType.name}}"
+                  ng-class="{'filter-active' : (testTypeFilter.testType === testFilterType.value)}">{{testFilterType.name}}</span>
+          </a>
+        </div>
+      </div>
+      <ul>
+        <li class="row">
+          <div class="col-1"><span class="cell-header">TYPE</span></div>
+          <div class="col-2"><span class="cell-header">BUILD</span></div>
+          <div class="col-3"><span class="cell-header">PROCESS</span></div>
+          <div class="col-2"><span class="cell-header">ENVIRONMENT</span></div>
+          <div class="col-3"><span class="cell-header">DATE</span></div>
+          <div class="col-1"><span class="cell-header">T/P/F</span></div>
+        </li>
+        <li ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter"
+            class="row" ng-class="{'failed' : (testResult.statistic.failed > 0)}">
+          <div class="col-1"><span class="cell">{{testResult.testType}}</span></div>
+          <div class="col-2"><span class="cell">{{testResult.buildNumber}}</span></div>
+          <div class="col-3"><span class="cell">{{testResult.processName}}</span></div>
+          <div class="col-2"><span class="cell">{{testResult.envName}}</span></div>
+          <div class="col-3"><span class="cell">{{getDate(testResult.timestamp)}}</span></div>
+          <div class="col-1"><span class="cell"><a href="/results/{{testResult.timestamp}}/#/">
+            {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed}}
+          </a></span></div>
+        </li>
+      </ul>
+    </div>
+    <!--<div class="col-3">
+      graphs
+    </div>-->
+  </section>
+</div>
 
-<ul>
-  <li ng-repeat="testFilterType in testFilterTypes">
-    <a href ng-click="setTestTypeFilter(testFilterType.value)">{{testFilterType.name}}</a>
-  </li>
-</ul>
-
-<ul>
-  <li ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter">
-    <a href="/results/{{testResult.timestamp}}/#/">[{{testResult.testType}}] {{testResult.processName}}
-                                                   ({{testResult.envName}}) on {{getDate(testResult.timestamp)}}
-    </a>
-  </li>
-</ul>
+<div class="loading-container ng-cloak">
+  <div class="subcontainer">
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+    <div class="balls"></div>
+  </div>
+</div>
 
 <script src="components/angularjs/angular.js"></script>
 <script src="libs/xdate.js"></script>
