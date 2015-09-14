@@ -17,8 +17,8 @@ module.exports = {
   pathToWdInput: pathToWorkDir + '/input',
   pathToWdOutput: pathToWorkDir + '/output',
 
-  //shareFolder: '\\\\STD-FILERPRD1\\dm_builds_local\\dv\\SRA\\allureResults',
-  shareFolder: '\\\\ua006248\\Incoming\\allure',
+  shareFolder: '\\\\STD-FILERPRD1\\dm_builds_local\\dv\\SRA\\allureResults',
+  //shareFolder: '\\\\ua006248\\Incoming\\allure',
   testFolderPrefix: 'allure-results_',
   testFolderSuffixLength: 13, //timestamp length
   copyCompleteFile: 'COPY_COMPLETE'
