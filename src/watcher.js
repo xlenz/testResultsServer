@@ -12,8 +12,8 @@ var chokidarConfig = {
   usePolling: true,
   alwaysStat: false,
   depth: 1,
-  interval: 2001,
-  binaryInterval: 3000,
+  interval: 11301,
+  binaryInterval: 13000,
 
   ignorePermissionErrors: true,
   atomic: true
