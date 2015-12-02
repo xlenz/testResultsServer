@@ -45,7 +45,7 @@
           <div class="col-2"><span class="cell">{{testResult.envName}}</span></div>
           <div class="col-3"><span class="cell">{{getDate(testResult.timestamp)}}</span></div>
           <div class="col-1"><span class="cell"><a href="/results/{{testResult.timestamp}}/#/">
-            {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed}}
+            {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed + testResult.statistic.broken}}
           </a></span></div>
         </li>
       </ul>
