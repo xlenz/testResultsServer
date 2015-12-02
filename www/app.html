@@ -38,7 +38,7 @@
           <div class="col-1"><span class="cell-header">T/P/F</span></div>
         </li>
         <li ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter"
-            class="row" ng-class="{'failed' : (testResult.statistic.failed > 0)}">
+            class="row" ng-class="{'failed' : (testResult.statistic.failed > 0 || testResult.statistic.broken > 0)}">
           <div class="col-1"><span class="cell">{{testResult.testType}}</span></div>
           <div class="col-2"><span class="cell">{{testResult.buildNumber}}</span></div>
           <div class="col-3"><span class="cell">{{testResult.processName}}</span></div>
