@@ -5,7 +5,9 @@ angular.module('allure.core.controllers', [])
 
         var store = $storage('allure-widgets-' + widgets.hash),
             storedWidgets = store.getItem('widgets') || widgets.data.reduce(function(all, widget, index) {
-            all[index % 2].push(widget.name);
+            if (widget.name !== 'xunit') {
+                all[index % 2].push(widget.name);
+            }
             return all;
         }, [[], []]);
 
@@ -51,9 +53,6 @@ angular.module('allure.core.controllers', [])
         }, {
             name: "Русский",
             locale: "ru"
-        },{
-           name: "Português",
-           locale: "ptbr" 
         }];
         $scope.selectedLang = locale.getItem('lang') || browserLanguage() || 'en';
         $translate.use($scope.selectedLang);
