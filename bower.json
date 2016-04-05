@@ -13,6 +13,7 @@
     "tests"
   ],
   "dependencies": {
-    "angularjs": "~1.4.5"
+    "angularjs": "~1.4.5",
+    "concise": "^3.3.0"
   }
 }
