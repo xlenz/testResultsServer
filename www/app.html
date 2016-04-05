@@ -9,72 +9,47 @@
 
   <title>Test results</title>
 
-  <link rel="stylesheet" href="css/loading.css"/>
-  <link rel="stylesheet" href="css/reset.css"/>
-  <link rel="stylesheet" href="css/hover.css"/>
+<link rel="stylesheet" href="components/concise/dist/concise.min.css"/>
   <link rel="stylesheet" href="css/app.css"/>
-  <link rel="stylesheet" href="css/simplegrid.css"/>
 </head>
 
 <body ng-controller="MainCtrl" ng-cloak>
-<div class="container-fluid ng-cloak">
-  <section class="row">
-    <div class="col-12">
-      <div class="vhover">
-        <div class="flip section">
-          <a ng-repeat="testFilterType in testFilterTypes" href ng-click="setTestTypeFilter(testFilterType.value)">
-            <span data-hover="{{testFilterType.name}}"
-                  ng-class="{'filter-active' : (testTypeFilter.testType === testFilterType.value)}">{{testFilterType.name}}</span>
-          </a>
-        </div>
-      </div>
-      <ul>
-        <li class="row">
-          <div class="col-1"><span class="cell-header">TYPE</span></div>
-          <div class="col-2"><span class="cell-header">BUILD</span></div>
-          <div class="col-3"><span class="cell-header">PROCESS</span></div>
-          <div class="col-2"><span class="cell-header">ENVIRONMENT</span></div>
-          <div class="col-3"><span class="cell-header">DATE</span></div>
-          <div class="col-1"><span class="cell-header">T/P/F</span></div>
-        </li>
-        <li ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter"
-            class="row" ng-class="{'failed' : (testResult.statistic.failed > 0 || testResult.statistic.broken > 0)}">
-          <div class="col-1"><span class="cell">{{testResult.testType}}</span></div>
-          <div class="col-2"><span class="cell">{{testResult.buildNumber}}</span></div>
-          <div class="col-3"><span class="cell">{{testResult.processName}}</span></div>
-          <div class="col-2"><span class="cell">{{testResult.envName}}</span></div>
-          <div class="col-3"><span class="cell">{{getDate(testResult.timestamp)}}</span></div>
-          <div class="col-1"><span class="cell"><a href="/results/{{testResult.timestamp}}/#/">
-            {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed + testResult.statistic.broken}}
-          </a></span></div>
-        </li>
-      </ul>
-    </div>
-    <!--<div class="col-3">
-      graphs
-    </div>-->
-  </section>
+<div tabindex="0" class="dropdown button button--affix button--sm">
+  Test type: {{testTypeFilter.testType || 'All'}} <span class="affix">&raquo;</span>
+  <ul class="dropdown-content">
+    <li ng-repeat="testFilterType in testFilterTypes" href ng-click="setTestTypeFilter(testFilterType.value)">
+      <span data-hover="{{testFilterType.name}}"
+            ng-class="{'filter-active' : (testTypeFilter.testType === testFilterType.value)}">{{testFilterType.name}}</span>
+    </li>
+  </ul>
 </div>
 
-<div class="loading-container ng-cloak">
-  <div class="subcontainer">
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-    <div class="balls"></div>
-  </div>
-</div>
+<table class="table--hoverRow table--full table--borderHorizontal">
+  <thead>
+    <tr>
+      <th scope="col" class="hide--small">TYPE</th>
+      <th scope="col" class="hide--extra-small">BUILD</th>
+      <th scope="col">PROCESS</th>
+      <th scope="col">ENVIRONMENT</th>
+      <th scope="col">DATE</th>
+      <th scope="col">T/P/F</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter"
+        class="row" ng-class="{'failed' : (testResult.statistic.failed > 0 || testResult.statistic.broken > 0)}">
+      <td class="hide--small">{{testResult.testType}}</td>
+      <td class="hide--extra-small" title="{{testResult.buildNumber}}">{{testResult.buildNumber.split('-')[0].trim()}}</td>
+      <td>{{testResult.processName}}</td>
+      <td>{{testResult.envName}}</td>
+      <td>{{getDate(testResult.timestamp)}}</td>
+      <td><a href="/results/{{testResult.timestamp}}/#/">
+        {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed + testResult.statistic.broken}}</a> 
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <script src="components/angularjs/angular.js"></script>
 <script src="libs/xdate.js"></script>
