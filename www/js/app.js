@@ -8,8 +8,8 @@
     $scope.testTypeFilter = {testType: undefined};
     $scope.testFilterTypes = [
       {name: 'All', value: ''},
-      {name: 'Rest', value: 'rest'},
-      {name: 'UI', value: 'ui'}
+      {name: 'rest', value: 'rest'},
+      {name: 'ui2', value: 'ui2'}
     ];
     $http({
       method: 'GET',
