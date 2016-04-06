@@ -4,6 +4,10 @@
   var app = angular.module('testResults', []);
 
   app.controller('MainCtrl', function ($scope, $http) {
+  	var apiUrl = '/api/results/';
+  	var requestParams = {
+      method: 'GET'
+    };
     $scope.testResults = [];
     $scope.testTypeFilter = {testType: undefined};
     $scope.testFilterTypes = [
@@ -11,13 +15,19 @@
       {name: 'rest', value: 'rest'},
       {name: 'ui2', value: 'ui2'}
     ];
-    $http({
-      method: 'GET',
-      url: '/api/results/1'
-    }).success(function (data) {
-      $scope.testResults = data;
-    }).error(function (data) {
+    var tr1 = $http(Object.assign({}, requestParams, {url: apiUrl + '1'}));
+    tr1.error(function (data) {
       console.error(data);
+    });
+    tr1.success(function (data) {
+      $scope.testResults = data;
+    });
+    tr1.then(function () {
+      $http(Object.assign({}, requestParams, {url: apiUrl + '2'}))
+    	.success(function (data) {
+          Array.prototype.push.apply($scope.testResults, data);
+          //$scope.testResults = $scope.testResults.concat(data);
+      });
     });
 
     $scope.getDate = function (timestamp) {
