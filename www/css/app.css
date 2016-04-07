@@ -1,7 +1,15 @@
 /* http://colorhunt.co/alltime#f9ed69f08a5db83b5e6a2c70 */
 
+.row:hover {
+    background-color: rgba(0,128,0, 0.05);
+}
+
 .row.failed {
     background-color: rgba(255,0,0, 0.1);
+}
+
+.row.failed:hover {
+    background-color: rgba(255,0,0, 0.2);
 }
 
 [ng-cloak] {
