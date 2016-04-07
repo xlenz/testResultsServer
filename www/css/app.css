@@ -4,17 +4,8 @@
     background-color: rgba(255,0,0, 0.1);
 }
 
-.ng-cloak
-{
-    display: none;
-}
-
-.loading-container.ng-cloak {
-    display: block;
-}
-
-.loading-container {
-    display: none;
+[ng-cloak] {
+    display: none !important;
 }
 
 body table th {

@@ -8,13 +8,13 @@
   <meta http-equiv="Content-Language" content="en">
 
   <title>Test results</title>
-
-<link rel="stylesheet" href="components/concise/dist/concise.min.css"/>
+  <link rel="stylesheet" href="css/spinkit.css"/>
+  <link rel="stylesheet" href="components/concise/dist/concise.min.css"/>
   <link rel="stylesheet" href="css/app.css"/>
 </head>
 
 <body ng-controller="MainCtrl" ng-cloak>
-<div tabindex="0" class="dropdown button button--affix button--sm">
+<div tabindex="0" class="dropdown button button--affix button--sm" ng-cloak>
   Test type: {{testTypeFilter.testType || 'All'}} <span class="affix">&raquo;</span>
   <ul class="dropdown-content">
     <li ng-repeat="testFilterType in testFilterTypes" href ng-click="setTestTypeFilter(testFilterType.value)">
@@ -37,7 +37,7 @@
   </thead>
 
   <tbody>
-    <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter"
+    <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter" ng-cloak
         class="row" ng-class="{'failed' : (testResult.statistic.failed > 0 || testResult.statistic.broken > 0)}">
       <td class="hide--small">{{testResult.testType}}</td>
       <td class="hide--extra-small" title="{{testResult.buildNumber}}">{{testResult.buildNumber.split('-')[0].trim()}}</td>
@@ -50,6 +50,12 @@
     </tr>
   </tbody>
 </table>
+
+<div class="sk-three-bounce" ng-hide="loaded">
+    <div class="sk-child sk-bounce1"></div>
+    <div class="sk-child sk-bounce2"></div>
+    <div class="sk-child sk-bounce3"></div>
+</div>
 
 <script src="js/polyfills.js"></script>
 <script src="components/angularjs/angular.js"></script>
