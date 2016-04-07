@@ -33,7 +33,7 @@
 
     $scope.getDate = function (timestamp) {
       var testDate = new XDate(timestamp);
-      return testDate.toString('dd MMM hh:MM:ss');//yyyy-MMM-dd
+      return testDate.toString('dd MMM HH:MM:ss');//yyyy-MMM-dd
     };
 
     $scope.setTestTypeFilter = function (testType) {
