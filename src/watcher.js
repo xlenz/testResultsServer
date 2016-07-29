@@ -70,7 +70,7 @@ function runAllureCli(allureInput, allureOutput, allureOutputData) {
   return new Promise(function (resolve, reject) {
     spawn.exec('cd ' +
       path.join(CONFIG.rootDir, CONFIG.pathToAllureBin) + //path to allure-cli bin
-      ` & cmd /c ${CONFIG.allureBatFile} ${allureInput} ${allureOutput}`
+      ` ; ./allure generate ${allureInput} -o ${allureOutput}`
       , function () {
         fse.ensureDir(allureOutputData, function (err) {
           if (err) return reject(err);
