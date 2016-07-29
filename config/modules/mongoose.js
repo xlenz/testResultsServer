@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/testResults');
+mongoose.Promise = global.Promise;
 
 var db = mongoose.connection;
 
