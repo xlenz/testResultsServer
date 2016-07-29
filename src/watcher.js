@@ -5,7 +5,7 @@ var chokidar = require('chokidar');
 var spawn = require('child_process');
 var Results = require('./models/Results');
 
-var copyComplete = `\\${CONFIG.copyCompleteFile}`;
+var copyComplete = `/${CONFIG.copyCompleteFile}`;
 var chokidarConfig = {
   persistent: true,
   cwd: CONFIG.shareFolder,
@@ -26,7 +26,7 @@ module.exports = function () {
   watcher.on('add', function (filePath) {
     //look for COPY_COMPLETE in test result folder. We don't care about other files and folders there
     if (filePath.indexOf(CONFIG.testFolderPrefix) !== 0 || filePath.substr(-copyComplete.length) !== copyComplete) return;
-    let allureFolder = filePath.split('\\')[0];
+    let allureFolder = filePath.split('/')[0];
     if (allureFolder.length !== CONFIG.testFolderPrefix.length + CONFIG.testFolderSuffixLength) return;
 
     //notify about COPY_COMPLETE file
