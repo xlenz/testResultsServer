@@ -19,6 +19,8 @@ var chokidarConfig = {
   atomic: true
 };
 
+var workers = [];
+
 module.exports = function () {
   var watcher = chokidar.watch([], chokidarConfig);
   watcher.add(['']);
@@ -39,50 +41,67 @@ module.exports = function () {
     let allureOutputData = path.join(allureOutput, 'data');
     let timestamp = allureFolder.substr(-CONFIG.testFolderSuffixLength);
 
-    copyToWorkDir(allureFolderPath, allureInput, allureFolder)
-      .then(() => {
-        return runAllureCli(allureInput, allureOutput, allureOutputData);
-      }).then(() => {
-        return parseCopyComplete(allureInput, timestamp);
-      }).then(dbRecord => {
-        return copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp);
-      }).then(dbRecord => {
-        return saveResultRecord(dbRecord);
-      }).then(() => {
-        return cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
-      }).catch((err) => {
-        return log.error(err);
-      });
+    log.verbose('workers:')
+    log.verbose(workers)
+    if (!workers.includes(timestamp)) {
+      workers.push(timestamp);
+
+      copyToWorkDir(allureFolderPath, allureInput, allureFolder)
+        .then(() => {
+          return runAllureCli(allureInput, allureOutput, allureOutputData);
+        }).then(() => {
+          return parseCopyComplete(allureInput, timestamp);
+        }).then(dbRecord => {
+          return copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp);
+        }).then(dbRecord => {
+          return saveResultRecord(dbRecord);
+        }).then(() => {
+          workers = workers.filter(e => e!==timestamp)
+          return cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
+        }).catch((err) => {
+          if (err.errno === -16)
+          return log.error(err);
+        });
+    }
   });
 };
 
 function copyToWorkDir(allureFolderPath, allureInput, allureFolder) {
   return new Promise(function (resolve, reject) {
+    log.verbose(`$Date.now(): copyToWorkDir - start`)
     fse.copy(allureFolderPath, allureInput, function (err) {
+      log.verbose(`$Date.now(): copyToWorkDir - copied`)
       if (err) return reject(err);
       log.verbose(`Copied to workDir: ${allureFolder}`);
       resolve();
     });
+    log.verbose(`$Date.now(): copyToWorkDir - end`)
   });
 }
 
 function runAllureCli(allureInput, allureOutput, allureOutputData) {
   return new Promise(function (resolve, reject) {
+    log.verbose(`$Date.now(): runAllureCli - start`)
     spawn.exec('cd ' +
       path.join(CONFIG.rootDir, CONFIG.pathToAllureBin) + //path to allure-cli bin
       ` ; ./allure generate ${allureInput} -o ${allureOutput}`
       , function () {
+        log.verbose(`$Date.now(): runAllureCli - spawned`)
         fse.ensureDir(allureOutputData, function (err) {
+          log.verbose(`$Date.now(): runAllureCli - copied`)
           if (err) return reject(err);
           resolve();
         });
       });
+    log.verbose(`$Date.now(): runAllureCli - end`)
   });
 }
 
 function parseCopyComplete(allureInput, timestamp) {
   return new Promise(function (resolve, reject) {
+    log.verbose(`$Date.now(): parseCopyComplete - start`)
     fse.readFile(path.join(allureInput, copyComplete), function (err, data) {
+      log.verbose(`$Date.now(): parseCopyComplete - file read`)
       if (err) return reject(err);
 
       let lines = data.toString('utf-8').split('\n');
@@ -97,49 +116,70 @@ function parseCopyComplete(allureInput, timestamp) {
       console.log(dbRecord);
       resolve(dbRecord);
     });
+    log.verbose(`$Date.now(): parseCopyComplete - end`)
   });
 }
 
 function copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp) {
   return new Promise(function (resolve, reject) {
+    log.verbose(`$Date.now(): copyToResultsAndSetStatistic - start`)
     let resultsDir = path.join(CONFIG.rootDir, CONFIG.pathToResults, timestamp, 'data');
     fse.copy(allureOutputData, resultsDir, function (errCopy) {
+      log.verbose(`$Date.now(): copyToResultsAndSetStatistic - copied`)
       if (errCopy) return reject(errCopy);
       log.verbose('test results copied to results folder.');
       fse.readJson(path.join(resultsDir, 'total.json'), function (errJson, totalJson) {
+        log.verbose(`$Date.now(): copyToResultsAndSetStatistic - readJson`)
         if (errJson) return reject(errJson);
         dbRecord.statistic = totalJson.statistic;
         resolve(dbRecord);
       });
     });
+    log.verbose(`$Date.now(): copyToResultsAndSetStatistic - end`)
   });
 }
 
 function saveResultRecord(dbRecord) {
   return new Promise(function (resolve, reject) {
+    log.verbose(`$Date.now(): saveResultRecord - start`)
     let result = new Results(dbRecord);
     result.save(function (err, saved) {
+      log.verbose(`$Date.now(): saveResultRecord - saved`)
       if (err) return reject(err);
       log.info(`test results are now available: ${dbRecord.timestamp}`);
       console.log(dbRecord.statistic);
       resolve();
     });
+    log.verbose(`$Date.now(): saveResultRecord - end`)
   });
 }
 
 function cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput) {
-  log.verbose('cleaning up...');
-  fse.remove(allureInput, function (err) {
-    if (err) return log.error(err);
-    log.verbose('work dir input cleaned up.');
-  });
-  fse.remove(allureOutput, function (err) {
-    if (err) return log.error(err);
-    log.verbose('work dir output cleaned up.');
-  });
-  fse.remove(allureFolderPath, function (err) {
-    if (err) return log.error(err);
-    log.verbose(`Deleted from share: ${allureFolder}`);
+  return new Promise(function (resolve, reject) {
+    log.verbose(`$Date.now(): cleanUp - start`)
+
+    fse.remove(allureInput, function (err) {
+      log.verbose(`$Date.now(): cleanUp - input done`)
+      if (err) log.error(err);
+      else log.verbose('work dir input cleaned up.');
+
+      fse.remove(allureOutput, function (err) {
+        log.verbose(`$Date.now(): cleanUp - output done`)
+        if (err) log.error(err);
+        else log.verbose('work dir output cleaned up.');
+
+        fse.remove(allureFolderPath, function (err) {
+          log.verbose(`$Date.now(): cleanUp - share done`)
+          if (err) log.error(err);
+          else log.verbose(`Deleted from share: ${allureFolder}`);
+
+          resolve();
+        });
+
+      });
+
+    });
+    log.verbose(`$Date.now(): cleanUp - end`)
   });
 }
 
