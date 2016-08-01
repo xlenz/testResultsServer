@@ -59,8 +59,27 @@ module.exports = function () {
           workers = workers.filter(e => e!==timestamp)
           return cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
         }).catch((err) => {
-          if (err.errno === -16)
-          return log.error(err);
+          if (err.errno === -16) {
+           log.error(err);
+           log.warn('network share issue, retrying in 30 seconds');
+            setTimeout(()=>{
+             return copyToWorkDir(allureFolderPath, allureInput, allureFolder)
+              .then(() => {
+                return runAllureCli(allureInput, allureOutput, allureOutputData);
+              }).then(() => {
+                return parseCopyComplete(allureInput, timestamp);
+              }).then(dbRecord => {
+                return copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp);
+              }).then(dbRecord => {
+                return saveResultRecord(dbRecord);
+              }).then(() => {
+                workers = workers.filter(e => e!==timestamp)
+                return cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
+              }).catch((err) => {
+                return log.error(err);
+              });
+            }, 30000)
+          } else return log.error(err);
         });
     }
   });
