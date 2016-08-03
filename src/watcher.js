@@ -87,40 +87,36 @@ module.exports = function () {
 
 function copyToWorkDir(allureFolderPath, allureInput, allureFolder) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`$Date.now(): copyToWorkDir - start`)
-    fse.copy(allureFolderPath, allureInput, function (err) {
-      log.verbose(`$Date.now(): copyToWorkDir - copied`)
+    log.verbose(`${Date.now()}: copyToWorkDir - start`)
+    cp_copy(allureFolderPath, allureInput, (err)=>{
       if (err) return reject(err);
       log.verbose(`Copied to workDir: ${allureFolder}`);
       resolve();
     });
-    log.verbose(`$Date.now(): copyToWorkDir - end`)
   });
 }
 
 function runAllureCli(allureInput, allureOutput, allureOutputData) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`$Date.now(): runAllureCli - start`)
+    log.verbose(`${Date.now()}: runAllureCli - start`)
     spawn.exec('cd ' +
       path.join(CONFIG.rootDir, CONFIG.pathToAllureBin) + //path to allure-cli bin
-      ` ; ./allure generate ${allureInput} -o ${allureOutput}`
-      , function () {
-        log.verbose(`$Date.now(): runAllureCli - spawned`)
+      ` ; ./allure generate ${allureInput} -o ${allureOutput}`, () => {
+        log.verbose(`${Date.now()}: runAllureCli - spawned`)
         fse.ensureDir(allureOutputData, function (err) {
-          log.verbose(`$Date.now(): runAllureCli - copied`)
+          log.verbose(`${Date.now()}: runAllureCli - copied`)
           if (err) return reject(err);
           resolve();
         });
       });
-    log.verbose(`$Date.now(): runAllureCli - end`)
   });
 }
 
 function parseCopyComplete(allureInput, timestamp) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`$Date.now(): parseCopyComplete - start`)
+    log.verbose(`${Date.now()}: parseCopyComplete - start`)
     fse.readFile(path.join(allureInput, copyComplete), function (err, data) {
-      log.verbose(`$Date.now(): parseCopyComplete - file read`)
+      log.verbose(`${Date.now()}: parseCopyComplete - file read`)
       if (err) return reject(err);
 
       let lines = data.toString('utf-8').split('\n');
@@ -135,70 +131,87 @@ function parseCopyComplete(allureInput, timestamp) {
       console.log(dbRecord);
       resolve(dbRecord);
     });
-    log.verbose(`$Date.now(): parseCopyComplete - end`)
   });
 }
 
 function copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`$Date.now(): copyToResultsAndSetStatistic - start`)
+    log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - start`)
     let resultsDir = path.join(CONFIG.rootDir, CONFIG.pathToResults, timestamp, 'data');
-    fse.copy(allureOutputData, resultsDir, function (errCopy) {
-      log.verbose(`$Date.now(): copyToResultsAndSetStatistic - copied`)
+
+    cp_copy(allureOutputData, resultsDir, (errCopy)=>{
       if (errCopy) return reject(errCopy);
       log.verbose('test results copied to results folder.');
+
       fse.readJson(path.join(resultsDir, 'total.json'), function (errJson, totalJson) {
-        log.verbose(`$Date.now(): copyToResultsAndSetStatistic - readJson`)
+        log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - readJson`)
         if (errJson) return reject(errJson);
         dbRecord.statistic = totalJson.statistic;
         resolve(dbRecord);
       });
     });
-    log.verbose(`$Date.now(): copyToResultsAndSetStatistic - end`)
   });
 }
 
 function saveResultRecord(dbRecord) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`$Date.now(): saveResultRecord - start`)
+    log.verbose(`${Date.now()}: saveResultRecord - start`)
     let result = new Results(dbRecord);
     result.save(function (err, saved) {
-      log.verbose(`$Date.now(): saveResultRecord - saved`)
+      log.verbose(`${Date.now()}: saveResultRecord - saved`)
       if (err) return reject(err);
       log.info(`test results are now available: ${dbRecord.timestamp}`);
       console.log(dbRecord.statistic);
       resolve();
     });
-    log.verbose(`$Date.now(): saveResultRecord - end`)
+    log.verbose(`${Date.now()}: saveResultRecord - end`)
   });
 }
 
 function cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`$Date.now(): cleanUp - start`)
+    log.verbose(`${Date.now()}: cleanUp - start`)
 
-    fse.remove(allureInput, function (err) {
-      log.verbose(`$Date.now(): cleanUp - input done`)
-      if (err) log.error(err);
-      else log.verbose('work dir input cleaned up.');
+    cp_rm(allureInput, (err1)=>{
+      log.verbose(`${Date.now()}: cleanUp - input done`)
+      if (err1) log.error(err1);
+      else log.verbose(`Copied to workDir: ${allureFolder}`);
 
-      fse.remove(allureOutput, function (err) {
-        log.verbose(`$Date.now(): cleanUp - output done`)
-        if (err) log.error(err);
+      cp_rm(allureOutput, (err2)=>{
+        log.verbose(`${Date.now()}: cleanUp - output done`)
+        if (err2) log.error(err2);
         else log.verbose('work dir output cleaned up.');
 
-        fse.remove(allureFolderPath, function (err) {
-          log.verbose(`$Date.now(): cleanUp - share done`)
-          if (err) log.error(err);
+        cp_rm(allureFolderPath, (err3)=>{
+          log.verbose(`${Date.now()}: cleanUp - share done`)
+          if (err3) log.error(err3);
           else log.verbose(`Deleted from share: ${allureFolder}`);
 
           resolve();
         });
-
       });
-
     });
-    log.verbose(`$Date.now(): cleanUp - end`)
+
+  });
+}
+
+function cp_copy(source, target, callback) {
+  var execStr = `cp -rf ${source} ${target}`;
+  log.info(`running: ${execStr}`);
+  spawn.exec(execStr, (err, stdout, stderr) => {
+    if (stdout) log.info(stdout);
+    if (stderr) log.error(stderr);
+    callback(err);
+  });
+}
+
+function cp_rm(target, callback) {
+  var execStr = `rm -rf ${target}`;
+  log.info(`running: ${execStr}`);
+  spawn.exec(execStr, (err, stdout, stderr) => {
+    if (stdout) log.info(stdout);
+    if (stderr) log.error(stderr);
+    callback(err);
   });
 }
 
