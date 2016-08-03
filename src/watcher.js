@@ -142,7 +142,7 @@ function copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp) {
     cp_mkdirs(resultsDir, (errMkdirs)=>{
       if (errMkdirs) return reject(errMkdirs);
 
-      cp_copy(allureOutputData, resultsDir, (errCopy)=>{
+      cp_copy(allureOutputData + '/*', resultsDir, (errCopy)=>{
         if (errCopy) return reject(errCopy);
         log.verbose('test results copied to results folder.');
 
