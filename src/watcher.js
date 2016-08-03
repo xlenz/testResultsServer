@@ -139,16 +139,21 @@ function copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp) {
     log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - start`)
     let resultsDir = path.join(CONFIG.rootDir, CONFIG.pathToResults, timestamp, 'data');
 
-    cp_copy(allureOutputData, resultsDir, (errCopy)=>{
-      if (errCopy) return reject(errCopy);
-      log.verbose('test results copied to results folder.');
+    cp_mkdirs(resultsDir, (errMkdirs)=>{
+      if (errMkdirs) return reject(errMkdirs);
 
-      fse.readJson(path.join(resultsDir, 'total.json'), function (errJson, totalJson) {
-        log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - readJson`)
-        if (errJson) return reject(errJson);
-        dbRecord.statistic = totalJson.statistic;
-        resolve(dbRecord);
+      cp_copy(allureOutputData, resultsDir, (errCopy)=>{
+        if (errCopy) return reject(errCopy);
+        log.verbose('test results copied to results folder.');
+
+        fse.readJson(path.join(resultsDir, 'total.json'), function (errJson, totalJson) {
+          log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - readJson`)
+          if (errJson) return reject(errJson);
+          dbRecord.statistic = totalJson.statistic;
+          resolve(dbRecord);
+        });
       });
+
     });
   });
 }
@@ -207,6 +212,16 @@ function cp_copy(source, target, callback) {
 
 function cp_rm(target, callback) {
   var execStr = `rm -rf ${target}`;
+  log.info(`running: ${execStr}`);
+  spawn.exec(execStr, (err, stdout, stderr) => {
+    if (stdout) log.info(stdout);
+    if (stderr) log.error(stderr);
+    callback(err);
+  });
+}
+
+function cp_mkdirs(target, callback) {
+  var execStr = `mkdir -p ${target}`;
   log.info(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
