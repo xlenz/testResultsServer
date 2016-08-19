@@ -62,7 +62,6 @@ module.exports = function () {
         await saveResultRecord(dbRecord);
         workers = workers.filter(e => e !== timestamp);
         await cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
-        await copyToWorkDir(allureFolderPath, allureInput, allureFolder);
       })();
     }
   });
