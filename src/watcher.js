@@ -200,7 +200,7 @@ function cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput) {
 }
 
 function cp_copy(source, target, callback) {
-  var execStr = `cp -rf ${source} ${target}`;
+  var execStr = `rm -rf ${target} ; cp -rf ${source} ${target}`;
   log.info(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
