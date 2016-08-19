@@ -1,6 +1,4 @@
 node_modules
-typings
-.vscode
 .tmp
 .idea
 www/components
