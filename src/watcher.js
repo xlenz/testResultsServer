@@ -210,7 +210,7 @@ function cp_copy(source, target, callback) {
 }
 
 function cp_move(source, target, callback) {
-  var execStr = `move ${source} ${target}`;
+  var execStr = `mv ${source} ${target}`;
   log.info(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
@@ -250,5 +250,5 @@ function normalizeCopyCompleteStr(str) {
 }
 
 function timeSpent(startTIme) {
-  return (Date.now() - startTIme) * 0.001;
+  return ( (Date.now() - startTIme) * 0.001 ).toFixed(2);
 }
