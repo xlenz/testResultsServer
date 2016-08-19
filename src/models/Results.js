@@ -5,7 +5,7 @@ var limitWeek = 30;
 var limitMonth = 150;
 var limitQuarter = 450;
 var limitHalf = 900;
-var sorting = {'timestamp': -1};
+var sorting = { 'timestamp': -1 };
 
 var schema = mongoose.Schema({
   timestamp: Number,
@@ -31,7 +31,7 @@ schema.statics.getPeriodResults = function (period) {
     return getAllResults(this);
   } else return {
     exec: function (cb) {
-      return cb({message: `Unknown period: ${period}`});
+      return cb({ message: `Unknown period: ${period}` });
     }
   };
 };
