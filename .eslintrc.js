@@ -23,10 +23,13 @@ module.exports = {
         "semi": [
             "warn",
             "always"
-        ]
+        ],
+        "no-unused-vars": ["error", { "vars": "all", "args": "none" }]
     },
     "globals": {
         "log": true,
-        "CONFIG": true
+        "CONFIG": true,
+        "XDate": true,
+        "angular": true
     }
 };
