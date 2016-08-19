@@ -1,9 +1,11 @@
 'use strict';
+
 var fse = require('fs-extra');
 var path = require('path');
 var chokidar = require('chokidar');
 var spawn = require('child_process');
 var Results = require('./models/Results');
+const zipFileName = 'allure-results.zip';
 
 var copyComplete = `/${CONFIG.copyCompleteFile}`;
 var chokidarConfig = {
@@ -46,63 +48,69 @@ module.exports = function () {
     if (!workers.includes(timestamp)) {
       workers.push(timestamp);
 
-      copyToWorkDir(allureFolderPath, allureInput, allureFolder)
-        .then(() => {
-          return runAllureCli(allureInput, allureOutput, allureOutputData);
-        }).then(() => {
-          return parseCopyComplete(allureInput, timestamp);
-        }).then(dbRecord => {
-          return copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp);
-        }).then(dbRecord => {
-          return saveResultRecord(dbRecord);
-        }).then(() => {
-          workers = workers.filter(e => e !== timestamp);
-          return cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
-        }).catch((err) => {
-          if (err.errno === -16) {
-            log.error(err);
-            log.warn('network share issue, retrying in 30 seconds');
-            setTimeout(() => {
-              return copyToWorkDir(allureFolderPath, allureInput, allureFolder)
-                .then(() => {
-                  return runAllureCli(allureInput, allureOutput, allureOutputData);
-                }).then(() => {
-                  return parseCopyComplete(allureInput, timestamp);
-                }).then(dbRecord => {
-                  return copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp);
-                }).then(dbRecord => {
-                  return saveResultRecord(dbRecord);
-                }).then(() => {
-                  workers = workers.filter(e => e !== timestamp);
-                  return cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
-                }).catch((err) => {
-                  return log.error(err);
-                });
-            }, 30000);
-          } else return log.error(err);
-        });
+      (async () => {
+        let copyResult = await copyToWorkDir(allureFolderPath, allureInput, allureFolder, 1);
+        if (!copyResult) {
+          for (var index = 0; index < 60 && !copyResult; index++) {
+            copyResult = await copyToWorkDir(allureFolderPath, allureInput, allureFolder, 60 * 1000);            
+          }
+        }
+        await unzipAllureResults(allureInput, zipFileName);
+        await runAllureCli(allureInput, allureOutput, allureOutputData);
+        let dbRecord = await parseCopyComplete(allureInput, timestamp);
+        await moveToResultsAndParseStatistic(dbRecord, allureOutputData, timestamp);
+        await saveResultRecord(dbRecord);
+        workers = workers.filter(e => e !== timestamp);
+        await cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput);
+        await copyToWorkDir(allureFolderPath, allureInput, allureFolder);
+      })();
     }
   });
 };
 
-function copyToWorkDir(allureFolderPath, allureInput, allureFolder) {
+function copyToWorkDir(allureFolderPath, allureInput, allureFolder, delay) {
+  return new Promise((resolve, reject) => {
+    let timeStart = Date.now();
+    setTimeout(() => {
+      cp_copy(allureFolderPath, allureInput, (err) => {
+        if (err) {
+          log.warn(`Failed to copy results from network share: ${allureFolder}, spent ${timeSpent(timeStart)}`);
+          log.error(err);
+          return resolve(false);
+        }
+        log.verbose(`Copied to workDir: ${allureFolder}, spent ${timeSpent(timeStart)}`);
+        resolve(true);
+      });
+    }, delay);
+  });
+}
+
+function unzipAllureResults(allureInput, zipFileName) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`${Date.now()}: copyToWorkDir - start`);
-    cp_copy(allureFolderPath, allureInput, (err) => {
+    let timeStart = Date.now();
+    cp_unzip(path.join(allureInput, zipFileName), allureInput, (err) => {
       if (err) return reject(err);
-      log.verbose(`Copied to workDir: ${allureFolder}`);
-      resolve();
+      log.verbose(`Unzipped archive, spent ${timeSpent(timeStart)}`);
+
+      timeStart = Date.now();
+      cp_rm(path.join(allureInput, zipFileName), (err1) => {
+        if (err1) log.error(err1);
+        else log.verbose(`removed zip file, spent ${timeSpent(timeStart)}`);
+        resolve();
+      });
     });
   });
 }
 
 function runAllureCli(allureInput, allureOutput, allureOutputData) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`${Date.now()}: runAllureCli - start`);
+    let timeStart = Date.now();
     spawn.exec(`cd ${path.join(CONFIG.rootDir, CONFIG.pathToAllureBin)} ; ./allure generate ${allureInput} -o ${allureOutput}`, () => {
-      log.verbose(`${Date.now()}: runAllureCli - spawned`);
+      log.verbose(`allure report generated, spent ${timeSpent(timeStart)}`);
+
+      timeStart = Date.now();
       fse.ensureDir(allureOutputData, function (err) {
-        log.verbose(`${Date.now()}: runAllureCli - copied`);
+        log.verbose(`allure report generation verified, spent ${timeSpent(timeStart)}`);
         if (err) return reject(err);
         resolve();
       });
@@ -112,9 +120,8 @@ function runAllureCli(allureInput, allureOutput, allureOutputData) {
 
 function parseCopyComplete(allureInput, timestamp) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`${Date.now()}: parseCopyComplete - start`);
+    let timeStart = Date.now();
     fse.readFile(path.join(allureInput, copyComplete), function (err, data) {
-      log.verbose(`${Date.now()}: parseCopyComplete - file read`);
       if (err) return reject(err);
 
       let lines = data.toString('utf-8').split('\n');
@@ -125,70 +132,64 @@ function parseCopyComplete(allureInput, timestamp) {
         'processName': normalizeCopyCompleteStr(lines[2]),
         'testType': normalizeCopyCompleteStr(lines[3])
       };
-      log.verbose('COPY_COMPLETE parsed:');
+      log.verbose(`COPY_COMPLETE parsed, spent ${timeSpent(timeStart)}`);
       log.verbose(dbRecord);
       resolve(dbRecord);
     });
   });
 }
 
-function copyToResultsAndSetStatistic(dbRecord, allureOutputData, timestamp) {
+function moveToResultsAndParseStatistic(dbRecord, allureOutputData, timestamp) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - start`);
+    let timeStart = Date.now();
     let resultsDir = path.join(CONFIG.rootDir, CONFIG.pathToResults, timestamp, 'data');
 
-    cp_mkdirs(resultsDir, (errMkdirs) => {
-      if (errMkdirs) return reject(errMkdirs);
+    cp_move(allureOutputData, resultsDir, (errCopy) => {
+      if (errCopy) return reject(errCopy);
+      log.verbose(`test results moved to results folder, spent ${timeSpent(timeStart)}`);
 
-      cp_copy(allureOutputData + '/*', resultsDir, (errCopy) => {
-        if (errCopy) return reject(errCopy);
-        log.verbose('test results copied to results folder.');
-
-        fse.readJson(path.join(resultsDir, 'total.json'), function (errJson, totalJson) {
-          log.verbose(`${Date.now()}: copyToResultsAndSetStatistic - readJson`);
-          if (errJson) return reject(errJson);
-          dbRecord.statistic = totalJson.statistic;
-          resolve(dbRecord);
-        });
+      timeStart = Date.now();
+      fse.readJson(path.join(resultsDir, 'total.json'), function (errJson, totalJson) {
+        log.verbose(`statistic file parsed, spent ${timeSpent(timeStart)}`);
+        if (errJson) return reject(errJson);
+        dbRecord.statistic = totalJson.statistic;
+        resolve(dbRecord);
       });
-
     });
   });
 }
 
 function saveResultRecord(dbRecord) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`${Date.now()}: saveResultRecord - start`);
+    let timeStart = Date.now();
     let result = new Results(dbRecord);
     result.save(function (err, saved) {
-      log.verbose(`${Date.now()}: saveResultRecord - saved`);
+      log.verbose(`work with databased completed, spent ${timeSpent(timeStart)}`);
       if (err) return reject(err);
       log.info(`test results are now available: ${dbRecord.timestamp}`);
       log.trace(dbRecord.statistic);
       resolve();
     });
-    log.verbose(`${Date.now()}: saveResultRecord - end`);
   });
 }
 
 function cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput) {
   return new Promise(function (resolve, reject) {
-    log.verbose(`${Date.now()}: cleanUp - start`);
+    let timeStart = Date.now();
 
     cp_rm(allureInput, (err1) => {
-      log.verbose(`${Date.now()}: cleanUp - input done`);
       if (err1) log.error(err1);
-      else log.verbose(`Copied to workDir: ${allureFolder}`);
+      else log.verbose(`work input cleaned, spent ${timeSpent(timeStart)}`);
 
+      timeStart = Date.now();
       cp_rm(allureOutput, (err2) => {
-        log.verbose(`${Date.now()}: cleanUp - output done`);
         if (err2) log.error(err2);
-        else log.verbose('work dir output cleaned up.');
+        else log.verbose(`work output cleaned, spent ${timeSpent(timeStart)}`);
 
+        timeStart = Date.now();
         cp_rm(allureFolderPath, (err3) => {
-          log.verbose(`${Date.now()}: cleanUp - share done`);
           if (err3) log.error(err3);
-          else log.verbose(`Deleted from share: ${allureFolder}`);
+          else log.verbose(`share cleaned up, spent ${timeSpent(timeStart)}`);
 
           resolve();
         });
@@ -208,6 +209,16 @@ function cp_copy(source, target, callback) {
   });
 }
 
+function cp_move(source, target, callback) {
+  var execStr = `move ${source} ${target}`;
+  log.info(`running: ${execStr}`);
+  spawn.exec(execStr, (err, stdout, stderr) => {
+    if (stdout) log.info(stdout);
+    if (stderr) log.error(stderr);
+    callback(err);
+  });
+}
+
 function cp_rm(target, callback) {
   var execStr = `rm -rf ${target}`;
   log.info(`running: ${execStr}`);
@@ -218,8 +229,8 @@ function cp_rm(target, callback) {
   });
 }
 
-function cp_mkdirs(target, callback) {
-  var execStr = `mkdir -p ${target}`;
+function cp_unzip(source, destination, callback) {
+  var execStr = `unzip -oq ${source} -d ${destination}`;
   log.info(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
@@ -236,4 +247,8 @@ function normalizeCopyCompleteStr(str) {
   return str
     .replace(/(\r\n|\n|\r)/gm, '') //remove \r \n etc
     .replace(/"/g, ''); //remove "
+}
+
+function timeSpent(startTIme) {
+  return (Date.now() - startTIme) * 0.001;
 }
