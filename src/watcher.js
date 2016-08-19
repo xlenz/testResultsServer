@@ -167,7 +167,7 @@ function saveResultRecord(dbRecord) {
       log.verbose(`work with databased completed, spent ${timeSpent(timeStart)}`);
       if (err) return reject(err);
       log.info(`test results are now available: ${dbRecord.timestamp}`);
-      log.trace(dbRecord.statistic);
+      log.verbose(dbRecord.statistic);
       resolve();
     });
   });
@@ -201,7 +201,7 @@ function cleanUp(allureFolder, allureFolderPath, allureInput, allureOutput) {
 
 function cp_copy(source, target, callback) {
   var execStr = `rm -rf ${target} ; cp -rf ${source} ${target}`;
-  log.info(`running: ${execStr}`);
+  log.verbose(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
     if (stderr) log.error(stderr);
@@ -211,7 +211,7 @@ function cp_copy(source, target, callback) {
 
 function cp_move(source, target, callback) {
   var execStr = `mkdir -p ${target} ; rm -rf ${target} ; mv ${source} ${target}`;
-  log.info(`running: ${execStr}`);
+  log.verbose(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
     if (stderr) log.error(stderr);
@@ -221,7 +221,7 @@ function cp_move(source, target, callback) {
 
 function cp_rm(target, callback) {
   var execStr = `rm -rf ${target}`;
-  log.info(`running: ${execStr}`);
+  log.verbose(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
     if (stderr) log.error(stderr);
@@ -231,7 +231,7 @@ function cp_rm(target, callback) {
 
 function cp_unzip(source, destination, callback) {
   var execStr = `unzip -oq ${source} -d ${destination}`;
-  log.info(`running: ${execStr}`);
+  log.verbose(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
     if (stderr) log.error(stderr);
