@@ -210,7 +210,7 @@ function cp_copy(source, target, callback) {
 }
 
 function cp_move(source, target, callback) {
-  var execStr = `mv ${source} ${target}`;
+  var execStr = `mkdir -p ${target} ; rm -rf ${target} ; mv ${source} ${target}`;
   log.info(`running: ${execStr}`);
   spawn.exec(execStr, (err, stdout, stderr) => {
     if (stdout) log.info(stdout);
