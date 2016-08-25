@@ -34,7 +34,7 @@ function internalServerError(err, req, res, next) {
   err.message = err.message || 'Unknown error';
   res.status(err.status || 500);
   log.error('Internal error(%d): %s', res.statusCode, err.message);
-  log.trace('req.body:\n', req.body);
+  log.verbose('req.body:\n%s', req.body);
   return res.send({
     error: err.message,
     code: 500
