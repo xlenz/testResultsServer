@@ -26,10 +26,10 @@
   <table class="table--full table--borderHorizontal">
     <thead>
       <tr>
-        <th scope="col" class="hide--small">TYPE</th>
+        <th scope="col"></th>
         <th scope="col" class="hide--extra-small">BUILD</th>
         <th scope="col">PROCESS</th>
-        <th scope="col">ENVIRONMENT</th>
+        <th scope="col" class="hide--small">ENVIRONMENT</th>
         <th scope="col">DATE</th>
         <th scope="col">T/P/F</th>
       </tr>
@@ -37,10 +37,12 @@
 
     <tbody>
       <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter" ng-cloak class="row" ng-class="{'failed' : (testResult.statistic.failed > 0 || testResult.statistic.broken > 0)}">
-        <td class="hide--small">{{testResult.testType}}</td>
+        <td width="32"><a href="/results/{{testResult.timestamp}}/#/">
+          <img src="images/unknown_test_type.png" height="26" width="26" ng-src="images/{{testResult.icon}}"></a>
+        </td>
         <td class="hide--extra-small" title="{{testResult.buildNumber}}">{{testResult.buildNumber.split('-')[0].trim()}}</td>
         <td>{{testResult.processName}}</td>
-        <td>{{testResult.envName}}</td>
+        <td class="hide--small">{{testResult.envName}}</td>
         <td>{{getDate(testResult.timestamp)}}</td>
         <td><a href="/results/{{testResult.timestamp}}/#/">
         {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed + testResult.statistic.broken}}</a>

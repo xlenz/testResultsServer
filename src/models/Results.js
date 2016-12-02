@@ -13,6 +13,7 @@ var schema = mongoose.Schema({
   buildNumber: String,
   processName: String,
   testType: String,
+  browser: String,
   statistic: Object
 });
 

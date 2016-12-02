@@ -129,7 +129,8 @@ function parseCopyComplete(allureInput, timestamp) {
         'envName': normalizeCopyCompleteStr(lines[0].split(' ')[0]), //remove extra symbols from env name
         'buildNumber': normalizeCopyCompleteStr(lines[1]),
         'processName': normalizeCopyCompleteStr(lines[2]),
-        'testType': normalizeCopyCompleteStr(lines[3])
+        'testType': normalizeCopyCompleteStr(lines[3]),
+        'browser': normalizeCopyCompleteStr(lines[4])
       };
       log.verbose(`COPY_COMPLETE parsed, spent ${timeSpent(timeStart)}`);
       log.verbose(dbRecord);
