@@ -15,10 +15,10 @@
 
 <body ng-controller="MainCtrl" ng-cloak>
   <div tabindex="0" class="dropdown button button--affix button--sm" ng-cloak>
-    Test type: {{testTypeFilter.testType || 'All'}} <span class="affix">&raquo;</span>
+    Test type: {{::testTypeFilter.testType || 'All'}} <span class="affix">&raquo;</span>
     <ul class="dropdown-content">
       <li ng-repeat="testFilterType in testFilterTypes" href ng-click="setTestTypeFilter(testFilterType.value)">
-        <span data-hover="{{testFilterType.name}}" ng-class="{'filter-active' : (testTypeFilter.testType === testFilterType.value)}">{{testFilterType.name}}</span>
+        <span data-hover="{{::testFilterType.name}}" ng-class="{'filter-active' : (testTypeFilter.testType === testFilterType.value)}">{{::testFilterType.name}}</span>
       </li>
     </ul>
   </div>
@@ -36,29 +36,29 @@
     </thead>
 
     <tbody>
-      <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter" ng-cloak class="row" ng-class="{'failed' : (testResult.statistic.failed > 0 || testResult.statistic.broken > 0)}">
-        <td width="32"><a href="/results/{{testResult.timestamp}}/#/">
-          <img src="images/unknown_test_type.png" height="26" width="26" ng-src="images/{{testResult.icon}}"></a>
+      <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter" ng-cloak class="row" ng-class="{'failed' : (testResult.statistic.failures > 0)}">
+        <td width="32"><a ng-href="/results/{{::testResult.timestamp}}/#/">
+          <img src="images/unknown_test_type.png" height="26" width="26" ng-src="images/{{::testResult.icon}}"></a>
         </td>
-        <td class="hide--extra-small" title="{{testResult.buildNumber}}">{{testResult.buildNumber.split('-')[0].trim()}}</td>
-        <td>{{testResult.processName}}</td>
-        <td class="hide--small">{{testResult.envName}}</td>
-        <td>{{getDate(testResult.timestamp)}}</td>
-        <td><a href="/results/{{testResult.timestamp}}/#/">
-        {{testResult.statistic.total}}/{{testResult.statistic.passed}}/{{testResult.statistic.failed + testResult.statistic.broken}}</a>
+        <td class="hide--extra-small" title="{{::testResult.buildNumber}}">{{::testResult.buildNumber.split('-')[0].trim()}}</td>
+        <td>{{::testResult.processName}}</td>
+        <td class="hide--small">{{::testResult.envName}}</td>
+        <td>{{::getDate(testResult.timestamp)}}</td>
+        <td><a ng-href="/results/{{::testResult.timestamp}}/#/">
+        {{::testResult.statistic.total}}/{{::testResult.statistic.passed}}/{{::testResult.statistic.failures}}</a>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <div class="sk-three-bounce" ng-hide="loaded">
+  <div class="sk-three-bounce" ng-if="!loaded">
     <div class="sk-child sk-bounce1"></div>
     <div class="sk-child sk-bounce2"></div>
     <div class="sk-child sk-bounce3"></div>
   </div>
 
   <script src="js/polyfills.js"></script>
-  <script src="components/angularjs/angular.js"></script>
+  <script src="components/angularjs/angular.min.js"></script>
   <script src="libs/xdate.js"></script>
   <script src="js/app.js"></script>
 </body>

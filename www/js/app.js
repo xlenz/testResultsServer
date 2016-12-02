@@ -21,19 +21,19 @@
       //console.error(data);
     });
     tr1.success(function (data) {
-      $scope.testResults = setIcon(data);
+      $scope.testResults = setIconAndTotalFailures(data);
       $scope.loaded = true;
     });
     tr1.then(function () {
       $http(Object.assign({}, requestParams, { url: apiUrl + '2' }))
         .success(function (data) {
-          Array.prototype.push.apply($scope.testResults, setIcon(data));
+          Array.prototype.push.apply($scope.testResults, setIconAndTotalFailures(data));
         });
     });
     tr1.then(function () {
       $http(Object.assign({}, requestParams, { url: apiUrl + '3' }))
         .success(function (data) {
-          Array.prototype.push.apply($scope.testResults, setIcon(data));
+          Array.prototype.push.apply($scope.testResults, setIconAndTotalFailures(data));
         });
     });
 
@@ -46,8 +46,9 @@
       $scope.testTypeFilter.testType = testType;
     };
 
-    function setIcon(arr) {
+    function setIconAndTotalFailures(arr) {
       arr.forEach((element, index) => {
+        arr[index].statistic.failures = element.statistic.failed + element.statistic.broken;
         if (element.testType === 'rest') arr[index].icon = 'terminal.png';
         else if (element.testType !== 'ui2') arr[index].icon = 'unknown_test_type.png';
         else if (!element.browser) arr[index].icon = 'unknown_browser.png';
