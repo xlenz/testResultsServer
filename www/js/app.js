@@ -30,6 +30,12 @@
           Array.prototype.push.apply($scope.testResults, setIcon(data));
         });
     });
+    tr1.then(function () {
+      $http(Object.assign({}, requestParams, { url: apiUrl + '3' }))
+        .success(function (data) {
+          Array.prototype.push.apply($scope.testResults, setIcon(data));
+        });
+    });
 
     $scope.getDate = function (timestamp) {
       var testDate = new XDate(timestamp);
