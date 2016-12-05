@@ -21,34 +21,43 @@
       //console.error(data);
     });
     tr1.success(function (data) {
-      $scope.testResults = setIconAndTotalFailures(data);
+      $scope.testResults = updateTestResults(data);
       $scope.loaded = true;
     });
     tr1.then(function () {
       $http(Object.assign({}, requestParams, { url: apiUrl + '2' }))
         .success(function (data) {
-          Array.prototype.push.apply($scope.testResults, setIconAndTotalFailures(data));
+          Array.prototype.push.apply($scope.testResults, updateTestResults(data));
         });
     });
     tr1.then(function () {
       $http(Object.assign({}, requestParams, { url: apiUrl + '3' }))
         .success(function (data) {
-          Array.prototype.push.apply($scope.testResults, setIconAndTotalFailures(data));
+          Array.prototype.push.apply($scope.testResults, updateTestResults(data));
         });
     });
 
-    $scope.getDate = function (timestamp) {
+    function getDate (timestamp) {
       var testDate = new XDate(timestamp);
       return testDate.toString('dd MMM HH:MM:ss');//yyyy-MMM-dd
-    };
+    }
 
     $scope.setTestTypeFilter = function (testType) {
       $scope.testTypeFilter.testType = testType;
     };
 
-    function setIconAndTotalFailures(arr) {
+    function updateTestResults(arr) {
       arr.forEach((element, index) => {
+        // failures total
         arr[index].statistic.failures = element.statistic.failed + element.statistic.broken;
+
+        // format date
+        arr[index].dateTime = getDate(element.timestamp);
+
+        // set build number only
+        arr[index].buildNumberOnly = element.buildNumber.split('-')[0].trim();
+
+        // set icon
         if (element.testType === 'rest') arr[index].icon = 'terminal.png';
         else if (element.testType !== 'ui2') arr[index].icon = 'unknown_test_type.png';
         else if (!element.browser) arr[index].icon = 'unknown_browser.png';

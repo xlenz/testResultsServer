@@ -40,10 +40,10 @@
         <td width="32"><a ng-href="/results/{{::testResult.timestamp}}/#/">
           <img src="images/unknown_test_type.png" height="26" width="26" ng-src="images/{{::testResult.icon}}"></a>
         </td>
-        <td class="hide--extra-small" title="{{::testResult.buildNumber}}">{{::testResult.buildNumber.split('-')[0].trim()}}</td>
+        <td class="hide--extra-small" title="{{::testResult.buildNumber}}">{{::testResult.buildNumberOnly}}</td>
         <td>{{::testResult.processName}}</td>
         <td class="hide--small">{{::testResult.envName}}</td>
-        <td>{{::getDate(testResult.timestamp)}}</td>
+        <td>{{::testResult.dateTime}}</td>
         <td><a ng-href="/results/{{::testResult.timestamp}}/#/">
         {{::testResult.statistic.total}}/{{::testResult.statistic.passed}}/{{::testResult.statistic.failures}}</a>
         </td>
