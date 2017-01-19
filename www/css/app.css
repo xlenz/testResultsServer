@@ -22,11 +22,23 @@ body table th {
     text-align: center;
 }
 
+body table tr {
+    vertical-align: middle;
+}
+
 body table td {
     line-height: 28px;
     padding: 2px 5px;
     text-align: center;
 }
+
+div.flexCel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+div.test-duration { font-size: 14px; }
 
 .dropdown {
     cursor: pointer;
@@ -34,13 +46,25 @@ body table td {
 
 @media (max-width:480px)
 {
-  .hide--extra-small{display:none;}
+  .hide--extra-small { display:none; }
+  div.test-duration { font-size: 13px; }
+}
+@media (max-width:600px)
+{
+  .hide--smaller { display:none; }
+  div.flexCel { display: block; }
 }
 @media (max-width:768px)
 {
-  .hide--small{display:none;}
+  .hide--small {display:none; }
 }
 @media (min-width:768px)
 {
-  .hide--small{display:table-cell;}
+  .hide--small { display:table-cell; }
+  .font--small { font-size: 15px; }
+}
+@media (max-width:900px)
+{
+  .font--small {font-size: 14px; }
+  body { font-size: 15px; }
 }

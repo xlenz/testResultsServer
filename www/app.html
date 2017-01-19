@@ -15,10 +15,10 @@
 
 <body ng-controller="MainCtrl" ng-cloak>
   <div tabindex="0" class="dropdown button button--affix button--sm" ng-cloak>
-    Test type: {{::testTypeFilter.testType || 'All'}} <span class="affix">&raquo;</span>
+    Test type: {{::testTypeFilter.test.type || 'All'}} <span class="affix">&raquo;</span>
     <ul class="dropdown-content">
       <li ng-repeat="testFilterType in testFilterTypes" href ng-click="setTestTypeFilter(testFilterType.value)">
-        <span data-hover="{{::testFilterType.name}}" ng-class="{'filter-active' : (testTypeFilter.testType === testFilterType.value)}">{{::testFilterType.name}}</span>
+        <span data-hover="{{::testFilterType.name}}" ng-class="{'filter-active' : (testTypeFilter.test.type === testFilterType.value)}">{{::testFilterType.name}}</span>
       </li>
     </ul>
   </div>
@@ -28,24 +28,48 @@
       <tr>
         <th scope="col"></th>
         <th scope="col" class="hide--extra-small">BUILD</th>
-        <th scope="col">PROCESS</th>
-        <th scope="col" class="hide--small">ENVIRONMENT</th>
+        <th scope="col">CONFIG</th>
+        <th scope="col" class="">OS</th>
+        <th scope="col" class="">DB</th>
         <th scope="col">DATE</th>
         <th scope="col">T/P/F</th>
       </tr>
     </thead>
 
     <tbody>
-      <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter" ng-cloak class="row" ng-class="{'failed' : (testResult.statistic.failures > 0)}">
-        <td width="32"><a ng-href="/results/{{::testResult.timestamp}}/#/">
-          <img src="images/unknown_test_type.png" height="26" width="26" ng-src="images/{{::testResult.icon}}"></a>
+      <tr ng-repeat="testResult in testResults | orderBy:'-timestamp' | filter:testTypeFilter" ng-cloak class="row" ng-class="{'failed' : (testResult.test.failures > 0)}">
+        <td width="32">
+          <a ng-href="/results/{{::testResult.timestamp}}/#/">
+            <img src="images/unknown_test_type.png" height="26" width="26" ng-src="images/{{::testResult.test.icon}}" title="{{::testResult.test.browser}}"></a>
         </td>
-        <td class="hide--extra-small" title="{{::testResult.buildNumber}}">{{::testResult.buildNumberOnly}}</td>
-        <td>{{::testResult.processName}}</td>
-        <td class="hide--small">{{::testResult.envName}}</td>
-        <td>{{::testResult.dateTime}}</td>
+        <td class="hide--extra-small" title="{{::testResult.build.package}}">{{::testResult.build.number}}</td>
+        <td>
+          <span class="font--small" title="{{::testResult.process.name}}">{{::testResult.process.type}}</span>
+        </td>
+        <td>
+          <div class="flexCel">
+            <img ng-src="images/{{::testResult.env.isNix ? 'Linux' : 'Windows'}}.png" height="26" width="26" title="{{::testResult.env.osNameExt}}">
+            <span class="font--small hide--smaller" title="{{::testResult.env.hostname}}">{{::testResult.env.osNameExt}}</span>
+            <img class="hide--extra-small">
+          </div>
+        </td>
+        <td>
+          <div class="flexCel">
+            <img class="hide--extra-small">
+            <span class="font--small hide--smaller" style="margin-right: 4px;">{{::testResult.env.dbName}} {{::testResult.env.dbVersion}}</span>
+            <img ng-src="images/{{::testResult.env.dbName}}.png" height="26" width="26" title="{{::testResult.env.dbName}} {{::testResult.env.dbVersion}}">
+          </div>
+        </td>
+        <td>
+          <div style="line-height: 1.3;">
+            {{::testResult.dateTime}}
+            <div ng-if="testResult.test.duration" class="test-duration">
+              {{::testResult.test.duration}}
+            </div>
+          </div>
+        </td>
         <td><a ng-href="/results/{{::testResult.timestamp}}/#/">
-        {{::testResult.statistic.total}}/{{::testResult.statistic.passed}}/{{::testResult.statistic.failures}}</a>
+          {{::testResult.test.total}} / {{::testResult.test.passes}}/{{::testResult.test.failures}}</a>
         </td>
       </tr>
     </tbody>

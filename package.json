@@ -1,6 +1,6 @@
 {
-  "name": "testResultsServer",
-  "version": "0.0.2",
+  "name": "test-results-server",
+  "version": "0.1.0",
   "main": "server.js",
   "author": "mgrybyk",
   "dependencies": {
@@ -8,6 +8,7 @@
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "mongoose": "^4.5.9",
+    "properties": "^1.2.1",
     "winston": "^2.2.0"
   },
   "devDependencies": {
@@ -17,5 +18,12 @@
   },
   "scripts": {
     "start": "./startup.sh"
+  },
+  "standard": {
+    "globals": [
+      "angular",
+      "CONFIG",
+      "log"
+    ]
   }
 }
