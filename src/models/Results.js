@@ -9,7 +9,7 @@ var sorting = { 'timestamp': -1 }
 
 var schema = mongoose.Schema({
   timestamp: Number,
-  processName: String,
+  process: Object,
   test: Object,
   build: Object,
   env: Object

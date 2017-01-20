@@ -160,8 +160,8 @@ function parseCopyComplete (allureInput, timestamp) {
       }
 
       // set icon
-      if (dbRecord.test.Type === 'rest') dbRecord.test.icon = 'terminal.png'
-      else if (dbRecord.test.Type !== 'ui2') dbRecord.test.icon = 'unknown_test_type.png'
+      if (dbRecord.test.type === 'rest') dbRecord.test.icon = 'terminal.png'
+      else if (dbRecord.test.type !== 'ui2') dbRecord.test.icon = 'unknown_test_type.png'
       else if (!dbRecord.test.browser) dbRecord.test.icon = 'unknown_browser.png'
       else if (dbRecord.test.browser.toLowerCase().includes('chrome')) dbRecord.test.icon = 'chrome.png'
       else if (dbRecord.test.browser.toLowerCase().includes('firefox')) dbRecord.test.icon = 'firefox.png'
