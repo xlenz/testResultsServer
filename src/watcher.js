@@ -193,7 +193,7 @@ function moveToResultsAndParseStatistic (dbRecord, allureOutputData, timestamp) 
         dbRecord.test.passes = totalJson.statistic.passed
         dbRecord.test.total = totalJson.statistic.total
         dbRecord.test.duration = msToTime(totalJson.time.duration)
-        .resolve(dbRecord)
+        resolve(dbRecord)
       })
     })
   })
